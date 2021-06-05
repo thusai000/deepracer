@@ -228,6 +228,116 @@ Resources:
                   commands:
                     - "sudo -u ubuntu -i bash -c 'cd /home/ubuntu/deepracer-for-cloud && ./bin/init.sh -c aws -a gpu'"
 
+  InstallDeepRacerDockerImagesComponent:
+    Type: AWS::ImageBuilder::Component
+    Properties:
+      Name: DeepRacerDockerImages
+      Version: 0.0.1
+      Description: Install the latest DeepRacer docker images.
+      ChangeDescription: First version
+      Platform: Linux
+      Data: |
+        name: InstallDeepRacerDockerImages
+        description: Downloads and Installs deepracer docker images
+        schemaVersion: 1.0
+        phases:
+          - name: build
+            steps:
+              - name: InstallDeepracerDockerImages
+                action: ExecuteBash
+                inputs:
+                  commands:
+                    - |
+                      cat << EOF > /home/ubuntu/pull-docker-images.sh
+                      REGISTRY=${REGISTRY:-"https://index.docker.io/v2"}
+                      REGISTRY_AUTH=${REGISTRY_AUTH:-"https://auth.docker.io"}
+                      REGISTRY_SERVICE=${REGISTRY_SERVICE:-"registry.docker.io"} 
+                      IMAGE_NAME=${IMAGE_NAME:-""}
+                      DOCKER_BIN=docker
+                      TAGS_FILTER=${TAGS_FILTER:-""}
+                      VERBOSE=0
+                      TAGS_LIMIT=1
+                      ignore_404=0
+
+                      # From: https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
+                      # A POSIX variable
+                      OPTIND=1         # Reset in case getopts has been used previously in the shell.
+
+                      while getopts "n:f:v" opt; do
+                          case "$opt" in
+                          n)  IMAGE_NAME="$OPTARG"
+                              ;;
+                          f)  TAGS_FILTER="$OPTARG"
+                              ;;
+                          v)  VERBOSE=1
+                              ;;
+                          esac
+                      done
+
+                      shift $((OPTIND-1))
+
+                      [ "${1:-}" = "--" ] && shift
+
+                      # echo "VERBOSE=$VERBOSE, TARGET='$TARGET', Leftovers: $@"
+
+                      if [ -z "$IMAGE_NAME" ]; then
+                        echo "Requires Image Name"
+                        exit 1;
+                      else
+                        if [[ "$VERBOSE" -eq 1 ]]; then
+                          echo "Using IMAGE_NAME: $IMAGE_NAME"
+                        fi
+                      fi
+
+                      function do_curl_get () {
+                        local URL="$1"
+                        shift
+                        local array=("$@")
+                        # echo -e "URL:\n$URL"
+                        # echo -e "{array[@]}:\n${array[@]}"
+                        HTTP_RESPONSE="$(curl -sSL --write-out "HTTPSTATUS:%{http_code}" \
+                          -H "Content-Type: application/json;charset=UTF-8" \
+                          "${array[@]}" \
+                          -X GET "$URL")"
+                        # echo $HTTP_RESPONSE
+                        HTTP_BODY=$(echo "$HTTP_RESPONSE" | sed -E 's/HTTPSTATUS\:[0-9]{3}$//')
+                        HTTP_STATUS=$(echo "$HTTP_RESPONSE" | tr -d '\n' | sed -E 's/.*HTTPSTATUS:([0-9]{3})$/\1/')
+                        # Check that the http status is 200
+                        if [[ "$HTTP_STATUS" -ne 200 ]]; then
+                          if [[ "$ignore_404" -eq 0 ]]; then
+                            if [[ "$VERBOSE" -eq 0 ]]; then
+                              echo -e "\\nError $HTTP_STATUS from: $URL\\n"
+                            else
+                              echo -e "\\nError $HTTP_STATUS from: $URL\\nHTTP_BODY: $HTTP_BODY\\n"
+                            fi
+                          fi
+                        fi
+                      }
+
+                      # Get AUTH token
+                      # This cannot be: ("")
+                      CURL_AUTH=()
+                      CURL_URL="$REGISTRY_AUTH/token?service=${REGISTRY_SERVICE##*(//)}&scope=repository:$IMAGE_NAME:pull"
+                      do_curl_get "$CURL_URL" "${CURL_AUTH[@]}"
+                      AUTH=$(echo "$HTTP_BODY" | jq --raw-output .token)
+
+                      # Get Tags
+                      CURL_AUTH=( -H "Authorization: Bearer $AUTH" )
+                      # echo "CURL_AUTH[@]: ${CURL_AUTH[@]}"
+                      CURL_URL="$REGISTRY/$IMAGE_NAME/tags/list"
+                      do_curl_get "$CURL_URL" "${CURL_AUTH[@]}"
+                      TAGS_CURL=$(echo "$HTTP_BODY")
+
+                      TAG=$(echo "$TAGS_temp"|sed -n 1,"$TAGS_LIMIT"p)
+
+                      docker pull $IMAGE_NAME:$TAG
+                      EOF
+                    - "bash -c "chmod a+rx /home/ubuntu/pull-docker-images.sh"
+                    - "bash -c "/home/ubuntu/pull-docker-images.sh -i awsdeepracercommunity/deepracer-robomaker -v -f '-gpu'"
+                    - "bash -c "/home/ubuntu/pull-docker-images.sh -i awsdeepracercommunity/deepracer-robomaker -v -f '-cpu-avx2'"
+                    - "bash -c "/home/ubuntu/pull-docker-images.sh -i awsdeepracercommunity/deepracer-sagemaker -v -f '-gpu'"
+                    - "bash -c "/home/ubuntu/pull-docker-images.sh -i awsdeepracercommunity/deepracer-rlcoach -v"
+
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-imagebuilder-imagerecipe.html
   UbuntuServerForDeepRacerImageRecipe:
     Type: AWS::ImageBuilder::ImageRecipe
