@@ -143,3 +143,34 @@ Resources:
           #!/bin/bash -xe
           /usr/local/bin/cfn-init --stack ${AWS::StackName} --resource Instance --region ${AWS::Region}
 
+  TerminationCronExpression:
+    Type: Custom:TerminationCronExpression
+    DependsOn:
+      - Instance
+    Properties:
+      ServiceToken:
+        !ImportValue
+        'Fn::Sub': '${ResourcesStackName}-FutureCronExpressionLambdaArn'
+      ttl: 5
+
+  TerminationTrigger:
+    Type: AWS::Events::Rule
+    Properties:
+      ScheduleExpression: !GetAtt TerminationCronExpression.cron_expression
+      State: ENABLED
+      Targets:
+        - Arn:
+            !ImportValue
+            'Fn::Sub': '${ResourcesStackName}-TerminationLambdaArn
+          Id: TerminateInstance
+          Input: !Sub '{"instance": "${Instance}"}'
+
+  TerminatePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        !ImportValue
+        'Fn::Sub': '${ResourcesStackName}-TerminationLambdaArn'
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt TerminationTrigger
