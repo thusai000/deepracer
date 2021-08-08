@@ -341,19 +341,19 @@ Resources:
                   print(response_data)
                   return response_data
 
-               try:
-                   ttl = int(event['ResourceProperties']['ttl'])
-               except (KeyError, ValueError)
-                   ttl = 60 * 12 # 12 hours
+              try:
+                  ttl = int(event['ResourceProperties']['ttl'])
+              except (KeyError, ValueError)
+                  ttl = 60 * 12 # 12 hours
  
-                expires = datetime.datetime.now() + datetime.timedelta(minutes=ttl)
-                cron_expression = f"cron({expires.minute} {expires.hour} "expires.day} {expires.month} ? {expires.year})"
-                print(F"cron expression: {cron_expression}")
-                response_data['cron_expression'] = cron_expression
-                if 'ResponseURL' in event:
-                    cfnresponse.send(event, context, response_code, response_data, physical_resource_id)
-                print(response_data)
-                return response_data
+              expires = datetime.datetime.now() + datetime.timedelta(minutes=ttl)
+              cron_expression = f"cron({expires.minute} {expires.hour} "expires.day} {expires.month} ? {expires.year})"
+              print(F"cron expression: {cron_expression}")
+              response_data['cron_expression'] = cron_expression
+              if 'ResponseURL' in event:
+                  cfnresponse.send(event, context, response_code, response_data, physical_resource_id)
+              print(response_data)
+              return response_data
 
   FutureTimeCronExpressionLambdaRole:
     Type: AWS::IAM::Role
