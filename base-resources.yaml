@@ -342,7 +342,7 @@ Resources:
                    ttl = int(event['ResourceProperties']['ttl'])
                except (KeyError, ValueError)
                    ttl = 60 * 12 # 12 hours
-              
+ 
                 expires = datetime.datetime.now() + datetime.timedelta(minutes=ttl)
                 cron_expression = f"cron({expires.minute} {expires.hour} "expires.day} {expires.month} ? {expires.year})"
                 print(F"cron expression: {cron_expression}")
@@ -380,13 +380,14 @@ Resources:
   TerminationLambda:
     Type: AWS::Lambda::Function
     Properties:
+      Role: !GetAtt TerminationLambdaRole.Arn
       Handler: index.handler
       Runtime: python3.7
       Code:
         ZipFile: |
           import json
           import boto3
-          import logging 
+          import logging
           import os
 
           logger = logging.getLogger()
@@ -399,3 +400,19 @@ Resources:
           def handler(event, context):
               logger.info('Printing event: {}'.format(event))
               return None
+
+  TerminationLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
