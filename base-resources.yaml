@@ -395,7 +395,7 @@ Resources:
           logger = logging.getLogger()
           logger.setLevel(logging.INFO)
 
-	  def execute_safe_termination(instance):
+          def execute_safe_termination(instance):
               ssm_client = boto3.client('ssm')
               try:
                   response = ssm_client.send_command(
