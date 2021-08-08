@@ -163,7 +163,7 @@ Resources:
             !ImportValue
             'Fn::Sub': '${ResourcesStackName}-TerminationLambdaArn'
           Id: TerminateInstance
-          Input: !Sub '{"instance": "${Instance}", "stack": '"${AWS::StackName}"}'
+          Input: !Sub '{"instance": "${Instance}", "stack": "${AWS::StackName}"}'
 
   TerminatePermission:
     Type: AWS::Lambda::Permission
