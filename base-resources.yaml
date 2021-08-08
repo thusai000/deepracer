@@ -343,7 +343,7 @@ Resources:
 
               try:
                   ttl = int(event['ResourceProperties']['ttl'])
-              except (KeyError, ValueError)
+              except:
                   ttl = 60 * 12 # 12 hours
  
               expires = datetime.datetime.now() + datetime.timedelta(minutes=ttl)
