@@ -161,7 +161,7 @@ Resources:
       Targets:
         - Arn:
             !ImportValue
-            'Fn::Sub': '${ResourcesStackName}-TerminationLambdaArn
+            'Fn::Sub': '${ResourcesStackName}-TerminationLambdaArn'
           Id: TerminateInstance
           Input: !Sub '{"instance": "${Instance}"}'
 
