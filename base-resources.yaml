@@ -355,7 +355,7 @@ Resources:
                 print(response_data)
                 return response_data
 
-  FutureTimeCronExprressionLambdaRole:
+  FutureTimeCronExpressionLambdaRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
