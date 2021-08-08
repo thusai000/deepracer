@@ -407,7 +407,7 @@ Resources:
                   command_id = response['Command']['CommandId']
                   print(f'Running commands on instance {instance}. Command id: {command_id}')
                   waiter = ssm_client.get_waiter('command_executed')
-                  waiter.wait(CommandId=command_id, instance_id=instance, WaiterConfig={'Delay': 30, 'MaxAttempts': 3})
+                  waiter.wait(CommandId=command_id, InstanceId=instance, WaiterConfig={'Delay': 30, 'MaxAttempts': 3})
               except ssm_client.exceptions.InvalidInstanceId:
                   print("SSM agent not running.")
               except ClientError as e:
