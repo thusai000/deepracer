@@ -323,6 +323,9 @@ Resources:
   FutureTimeCronExpressionLambda:
     Type: AWS::Lambda::Function
     Properties:
+      Handler: index.handler
+      Role: !GetAtt FutureTimeCronExpressionLambdaRole.Arn
+      Runtime: python3.7
       Code:
         ZipFile: |
           import cfnresponse
@@ -351,8 +354,6 @@ Resources:
                     cfnresponse.send(event, context, response_code, response_data, physical_resource_id)
                 print(response_data)
                 return response_data
-          Handler: index.handler
-          Role: !GetAtt FutureTimeCronExpressionLambdaRole.Arn
 
   FutureTimeCronExprressionLambdaRole:
     Type: AWS::IAM::Role
