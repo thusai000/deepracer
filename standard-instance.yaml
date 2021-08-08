@@ -150,7 +150,7 @@ Resources:
     Properties:
       ServiceToken:
         !ImportValue
-        'Fn::Sub': '${ResourcesStackName}-FutureCronExpressionLambdaArn'
+        'Fn::Sub': '${ResourcesStackName}-FutureTimeCronExpressionLambdaArn'
       ttl: 5
 
   TerminationTrigger:
