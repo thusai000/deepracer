@@ -173,4 +173,4 @@ Resources:
         'Fn::Sub': '${ResourcesStackName}-TerminationLambdaArn'
       Action: lambda:InvokeFunction
       Principal: events.amazonaws.com
-      SourceArn: !GetAtt TerminationTrigger
+      SourceArn: !GetAtt TerminationTrigger.Arn
