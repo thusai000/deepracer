@@ -461,6 +461,5 @@ Resources:
                   - sns:*
                   - ssm:*
                   - cloudformation:DeleteStack
-                 Resource: '*'
-        
+                Resource: '*'
 
