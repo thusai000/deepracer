@@ -144,7 +144,7 @@ Resources:
           /usr/local/bin/cfn-init --stack ${AWS::StackName} --resource Instance --region ${AWS::Region}
 
   TerminationCronExpression:
-    Type: Custom:TerminationCronExpression
+    Type: Custom::TerminationCronExpression
     DependsOn:
       - Instance
     Properties:
