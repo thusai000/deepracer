@@ -462,6 +462,8 @@ Resources:
                   - ssmmessages:OpenDataChannel
                   - sns:*
                   - ssm:*
+                  - events:*
+                  - lambda:*
                   - cloudformation:DeleteStack
                 Resource: '*'
 
