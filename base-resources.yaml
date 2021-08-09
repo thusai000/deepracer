@@ -384,6 +384,7 @@ Resources:
       Role: !GetAtt TerminationLambdaRole.Arn
       Handler: index.handler
       Runtime: python3.7
+      Timeout: 900
       Code:
         ZipFile: !Sub |
           import json
