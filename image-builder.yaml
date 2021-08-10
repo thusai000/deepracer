@@ -665,7 +665,7 @@ Resources:
 
       Description: Delete old AMIs
       MemorySize: 256
-      Timeout: 300
+      Timeout: 900
       AutoPublishAlias: live
       Environment:
         Variables:
