@@ -460,6 +460,7 @@ Resources:
                   - ssmmessages:CreateDataChannel
                   - ssmmessages:OpenControlChannel
                   - ssmmessages:OpenDataChannel
+                  - iam:*
                   - sns:*
                   - ssm:*
                   - events:*
