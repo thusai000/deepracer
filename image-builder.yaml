@@ -660,7 +660,7 @@ Resources:
                     current_image = message_json['outputResources']['amis'][0]['image']
                     get_amis_with_my_stack(current_image)
 
-                delete_ebs_snapshots():
+                delete_ebs_snapshots()
             return None
 
       Description: Delete old AMIs
