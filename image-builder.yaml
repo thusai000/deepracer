@@ -604,7 +604,7 @@ Resources:
         def delete_ebs_snapshots():
             paginator = ec2_client.get_paginator('describe_snapshots')
             for page in paginator.paginate():
-                ec2_clent.delete_snapshot(SnapshotId=page['SnapshotId'])
+                ec2_client.delete_snapshot(SnapshotId=page['SnapshotId'])
 
         def get_image_by_parameter():
             try:
