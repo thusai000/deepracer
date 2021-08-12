@@ -613,7 +613,7 @@ Resources:
                         ec2_client.delete_snapshot(SnapshotId=snapshot['SnapshotId'])
                         print('DELETED EBS SNAPSHOT')
                         print(snapshot['SnapshotId'])
-                    except e:
+                    except Exception as e:
                         print('EXCEPTION DELETING SNAPSHOT')
                         print(e)
 
