@@ -613,8 +613,9 @@ Resources:
                         ec2_client.delete_snapshot(SnapshotId=snapshot['SnapshotId'])
                         print('DELETED EBS SNAPSHOT')
                         print(snapshot['SnapshotId'])
-                    except:
-                        pass
+                    except e:
+                        print('EXCEPTION DELETING SNAPSHOT')
+                        print(e)
 
         def get_image_by_parameter():
             try:
