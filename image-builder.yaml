@@ -603,7 +603,7 @@ Resources:
 
         def delete_ebs_snapshots():
             paginator = ec2_client.get_paginator('describe_snapshots')
-            for page in paginator.paginate():
+            for page in paginator.paginate({'OwnerIds': '${AWS::AccountId}'}):
                 print('PAGE:')
                 print(page)
                 for snapshot in page['Snapshots']:
