@@ -609,6 +609,8 @@ Resources:
                 for snapshot in page['Snapshots']:
                     try:
                         ec2_client.delete_snapshot(SnapshotId=snapshot['SnapshotId'])
+                    except:
+                        pass
 
         def get_image_by_parameter():
             try:
