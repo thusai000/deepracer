@@ -608,7 +608,11 @@ Resources:
                 print(page)
                 for snapshot in page['Snapshots']:
                     try:
+                        print('SNAPSHOT')
+                        print(snapshot)
                         ec2_client.delete_snapshot(SnapshotId=snapshot['SnapshotId'])
+                        print('DELETED EBS SNAPSHOT')
+                        print(snapshot['SnapshotId'])
                     except:
                         pass
 
