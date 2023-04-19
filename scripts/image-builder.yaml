@@ -3,7 +3,7 @@ Transform: AWS::Serverless-2016-10-31
 Parameters:
   BuildInstanceType:
     Type: CommaDelimitedList
-    Default: g4dn.2xlarge
+    Default: g4dn.xlarge
     Description: >-
       Comma-delimited list of one or more instance types to select from when building
       the image. Image Builder will select a type based on availability. The supplied
