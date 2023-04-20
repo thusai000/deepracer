@@ -9,10 +9,16 @@ if [ $? -eq 4 ]; then echo "error in hyperparameters.hson" && exit 1; fi
 #track exists
 source custom-files/run.env
 tracks=$(curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/aws-deepracer-community/deepracer-race-data/contents/raw_data/tracks/npy | jq '.[] | .name' )
+if  [[ -z "$DR_WORLD_NAME" ]]; then
+  export DR_WORLD_NAME=AmericasGeneratedInclStart
+fi
+
 if ! [[ ${tracks[*]} =~ "$DR_WORLD_NAME" ]]; then
   echo "DR_WORLD_NAME=$DR_WORLD_NAME TRACK IN run.env DOES NOT EXIST. VALID TRACKS ARE $tracks" 
   exit 1 
 fi
+
+echo "Using track $DR_WORLD_NAME"
 
 #race type exists
 allowedracetypes='"TIME_TRIAL" "OBJECT_AVOIDANCE" "HEAD_TO_BOT"'
